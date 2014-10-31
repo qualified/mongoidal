@@ -18,10 +18,10 @@ class RevisableEmbeddedExample
 end
 
 class User
-  include Mongoid::Document
+  include Mongoidal::RootDocument
 
   def self.current
-    User.first
+    User.first || User.new
   end
 end
 
