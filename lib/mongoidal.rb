@@ -14,8 +14,8 @@ require 'mongoidal/root_document'
 require 'mongoidal/embedded_document'
 require 'mongoidal/revisable'
 require 'mongoidal/revision'
-require 'mongoidal/service'
-require 'mongoidal/service_worker'
+require 'mongoidal/service_object'
+require 'mongoidal/service_object_worker'
 
 module Mongoidal
   # Your code goes here...
