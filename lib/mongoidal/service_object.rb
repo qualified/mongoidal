@@ -29,15 +29,17 @@ module Mongoidal
 
     protected
 
+    # override in implementing classes to provide custom additional arguments to the worker
     def custom_args
       {}
     end
 
     def worker_args(*args)
-      {
-          'params' => pack_params(args),
-          'current_user_id' => User.current && User.current.id.to_s
-      }.merge!(custom_args)
+      args = {'params' => pack_params(args)}
+      if User.respond_to?(:current)
+        args['current_user_id'] = User.current && User.current.id.to_s
+      end
+      args.merge!(custom_args)
     end
 
     # packs up the params so that they can go on a trip! Basically it stores the information needed

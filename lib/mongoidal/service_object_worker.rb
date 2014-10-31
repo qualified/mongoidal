@@ -22,14 +22,14 @@ module Mongoidal
     # will load and return the current user that was current at the time that the context worker
     # was queued. This will also make that user the User.current
     def load_current_user
-      @current_user = if @options && @options['current_user_id']
-        User.current = User.find(@options['current_user_id'])
+      @current_user = if @args && @args['current_user_id']
+        User.current = User.find(@args['current_user_id'])
       end
     end
 
-    def perform(options)
-      @options = options
-      execute(*unpack_params(options['params']))
+    def perform(args)
+      @args = args
+      execute(*unpack_params(args['params']))
     end
 
     protected
