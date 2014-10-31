@@ -1,9 +1,13 @@
 require 'sidekiq'
 
 module Mongoidal
-  class ServiceWorker
-    include Sidekiq::Worker
-    include ClassLogger
+  module ServiceObjectWorker
+    extend ActiveSupport::Concern
+
+    included do
+      include Sidekiq::Worker
+      include ClassLogger
+    end
 
     def job_name(*args)
       logger_name

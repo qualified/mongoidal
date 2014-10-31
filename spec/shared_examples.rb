@@ -1,8 +1,3 @@
-class RootExample
-  include Mongoidal::RootDocument
-
-  field :name
-end
 
 class RevisableExample
   include Mongoidal::RootDocument
@@ -36,7 +31,8 @@ class User
       orig = User.current
       begin
         User.current = self
-      esnure
+        yield
+      ensure
         User.current = orig
       end
     else

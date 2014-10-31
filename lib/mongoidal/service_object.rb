@@ -1,7 +1,6 @@
 module Mongoidal
-  # provides a base context class to use for creating advanced operations on data models.
-  # This is essentially the service object pattern.
-  class Service
+  # provides a base service class to use for creating advanced operations on data models.
+  class ServiceObject
     include ClassLogger
 
     def current_user

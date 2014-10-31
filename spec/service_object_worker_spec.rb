@@ -1,12 +1,18 @@
 require 'spec_helper'
 
+class ExampleWorker
+  include Mongoidal::ServiceObjectWorker
 
-describe Mongoidal::ServiceWorker do
-  let(:worker) { Mongoidal::ServiceWorker.new }
-  before { worker.stub(:execute) }
+  def execute
+  end
+end
+
+describe Mongoidal::ServiceObjectWorker do
+  let(:worker) { ExampleWorker.new }
+  before { allow(worker).to receive(:execute) }
 
   def pack_args(*args)
-    Mongoidal::Service.new.send(:worker_args, *args)
+    Mongoidal::ServiceObject.new.send(:worker_args, *args)
   end
 
   describe '#current_user' do
@@ -32,10 +38,11 @@ describe Mongoidal::ServiceWorker do
 
   describe '#unpack_params' do
     def pack_params(*params)
-      Mongoidal::Service.new.send(:pack_params, params)
+      Mongoidal::ServiceObject.new.send(:pack_params, params)
     end
 
-    let(:root_document) { RootExample.create }
+    let(:root_document) { RevisableExample.create }
+    let(:embed_document) { root_document.revisable_embedded_examples.create }
 
     subject { worker.send(:unpack_params, params) }
 
@@ -43,32 +50,32 @@ describe Mongoidal::ServiceWorker do
       let(:params) { pack_params(root_document) }
 
       it 'should return the root document' do
-        subject.first.should be root_document
+        expect(subject.first).to eq root_document
       end
     end
 
     context 'expanding an embedded document' do
-      let(:params) { pack_params(root_document.languages.first) }
+      let(:params) { pack_params(embed_document) }
 
       it 'should return the root document' do
-        subject.first.should be root_document.languages.first
+        expect(subject.first).to eq embed_document
       end
     end
 
     context 'expanding multiple documents' do
-      let(:args) { [root_document, root_document.languages.first, 'a', 1] }
+      let(:args) { [root_document, embed_document, 'a', 1] }
       let(:params) { pack_params(*args) }
 
       it 'should expand into original values' do
-        subject.should == args
+        expect(subject).to eq(args)
       end
     end
 
     context 'expanding a class' do
-      let(:params) { pack_params(RootExample) }
+      let(:params) { pack_params(RevisableExample) }
 
       it 'should epxand into class' do
-        subject.first.should == RootExample
+        expect(subject.first).to eq(RevisableExample)
       end
     end
   end

@@ -1,5 +1,6 @@
 require 'mongoid'
 require "mongoidal/version"
+require 'mongoidal/string_extensions'
 require 'mongoidal/class_logger'
 require "mongoidal/field_callbacks"
 require 'mongoidal/instance_callbacks'

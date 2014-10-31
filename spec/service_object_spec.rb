@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'sidekiq'
 
-describe Mongoidal::Service do
-  let(:service) { Mongoidal::Service.new }
+describe Mongoidal::ServiceObject do
+  let(:service) { Mongoidal::ServiceObject.new }
 
   describe '#worker_args' do
     subject { service.send(:worker_args, *args) }
@@ -38,7 +38,7 @@ describe Mongoidal::Service do
     end
 
     context '(id)' do
-      let(:root_document) { RootExample.create }
+      let(:root_document) { RevisableExample.create }
       let(:args) { [root_document.id] }
 
       context 'params array' do
@@ -56,7 +56,7 @@ describe Mongoidal::Service do
     end
 
     context '(root_document)' do
-      let(:root_document) { RootExample.create }
+      let(:root_document) { RevisableExample.create }
       let(:args) { [root_document] }
 
       it_behaves_like 'packed current_user_id'
@@ -73,7 +73,7 @@ describe Mongoidal::Service do
     end
 
     context '(root_document, int)' do
-      let(:root_document) { RootExample.create }
+      let(:root_document) { RevisableExample.create }
       let(:args) { [root_document, 5] }
 
       it_behaves_like 'packed current_user_id'
@@ -94,7 +94,7 @@ describe Mongoidal::Service do
     end
 
     context '(root_document, embedded_document)' do
-      let(:root_document) { RootExample.create }
+      let(:root_document) { RevisableExample.create }
       let(:embedd) { root_document.revisable_embedded_examples.create }
       let(:args) { [root_document, embedd] }
 
