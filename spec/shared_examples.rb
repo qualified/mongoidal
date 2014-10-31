@@ -1,3 +1,9 @@
+class RootExample
+  include Mongoidal::RootDocument
+
+  field :name
+end
+
 class RevisableExample
   include Mongoidal::RootDocument
   include Mongoidal::Revisable
@@ -13,15 +19,29 @@ class RevisableExample
 end
 
 class RevisableEmbeddedExample
-  include Mongoid::Document
+  include Mongoidal::EmbeddedDocument
+  embedded_in :revisable_example
   field :name
 end
 
 class User
   include Mongoidal::RootDocument
 
-  def self.current
-    User.first || User.new
+  class << self
+    attr_accessor :current
+  end
+
+  def make_current
+    if block_given?
+      orig = User.current
+      begin
+        User.current = self
+      esnure
+        User.current = orig
+      end
+    else
+      User.current = self
+    end
   end
 end
 

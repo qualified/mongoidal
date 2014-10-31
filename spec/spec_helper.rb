@@ -31,6 +31,7 @@ RSpec.configure do |config|
   config.before(:each) do
     Mongoid.purge!
     Mongoid::IdentityMap.clear if defined?(Mongoid::IdentityMap)
+    User.current = nil
   end
 
   config.after(:suite) do
