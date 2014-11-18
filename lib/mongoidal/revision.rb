@@ -23,6 +23,7 @@ module Mongoidal
       field :tag,                 type: String
 
       field :message,             type: String
+      field :label,               type: String
 
       field :revised_attributes,  type: Hash, default: ->{{}}
       field :revised_embeds,      type: Hash, default: ->{{}}

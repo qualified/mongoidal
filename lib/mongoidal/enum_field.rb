@@ -10,7 +10,7 @@ module Mongoidal
 
         options[:type] ||= Symbol
 
-        field_options = options.slice(:type, :default, :index, :required)
+        field_options = options.slice(:type, :default, :index)
 
         field field_name, field_options
 
