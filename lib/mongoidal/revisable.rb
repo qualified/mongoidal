@@ -150,8 +150,8 @@ module Mongoidal
       history
     end
 
-    def revise(message = nil)
-      revision = _revise(message)
+    def revise(message: nil, tag: nil)
+      revision = _revise(message, tag)
       result = respond_to?(:store) ? store : save
       if result
         revision
@@ -161,9 +161,9 @@ module Mongoidal
 
     end
 
-    def revise!(message = nil)
-      revision = _revise(message)
-      respond_to?(:store!) ? store! : save
+    def revise!(message: nil, tag: nil)
+      revision = _revise(message, tag)
+      respond_to?(:store!) ? store! : save!
       revision
     end
 
@@ -173,7 +173,7 @@ module Mongoidal
 
     protected
 
-    def _revise(message)
+    def _revise(message, tag)
       if has_revised_changes?
         if last_revision_number.nil?
           build_base_revision
@@ -182,6 +182,7 @@ module Mongoidal
 
         revision = build_next_revision
         revision.message = message
+        revision.tag = tag
 
         self.last_revision_number = revision.number
         @revision_tree = nil
