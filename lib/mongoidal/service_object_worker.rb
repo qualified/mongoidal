@@ -50,7 +50,7 @@ module Mongoidal
     def unpack_param(param)
       value = case param['_']
         when 'root_doc'
-          param['class_name'].to_const.find(param['id'])
+          param['class_name'].to_const.where(id: param['id']).first
 
         when 'embedded_doc'
           expand_embedded_doc(param)
@@ -68,7 +68,7 @@ module Mongoidal
 
     # uses the path info passed in as a way of recovering the embedded document
     def expand_embedded_doc(param)
-      parent = param['parent_class_name'].to_const.find(param['parent_id'])
+      parent = param['parent_class_name'].to_const.where(id: param['parent_id']).first
       if parent
         parent.relations.values.each do |relation|
           if relation.class_name == param['class_name']
