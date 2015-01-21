@@ -21,15 +21,16 @@ module Mongoidal
       self.class.new(reset_ids(attributes.dup))
     end
 
-    def copy_fields_to(target, *fields, overwrite_nil_only: false)
+    def copy_fields_to(target, *fields, overwrite_nil_only: false, ignore_nil_source: true)
       fields.each do |field|
         if not overwrite_nil_only or target[field].nil?
           val = self[field]
-
-          target[field] = if val.is_a?(Hash) or val.is_a?(Array)
-            reset_ids(val)
-          else
-            val
+          unless val.nil? and ignore_nil_source
+            target[field] = if val.is_a?(Hash) or val.is_a?(Array)
+              reset_ids(val)
+            else
+              val
+            end
           end
         end
       end
