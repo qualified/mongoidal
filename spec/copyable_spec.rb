@@ -59,4 +59,43 @@ describe Mongoidal::Copyable do
       expect(b.id).not_to eq a.id
     end
   end
+
+  describe '#copy_fields_to' do
+    context 'when no existing values' do
+      before do
+        a_child.save
+        a.copy_fields_to(b, :address, :copyable_childs)
+        b.save
+        b.reload
+      end
+
+      it 'should copy fields' do
+        expect(b.address).to eq a.address
+        expect(b_child.label).to eq 'a'
+      end
+
+      it 'should reset ids' do
+        expect(b_child.id.to_s).to_not eq a_child.id.to_s
+      end
+    end
+
+    context 'when values exist' do
+      let(:b) { CopyableExample.new(address: '1') }
+
+      describe 'overwrite_nil_only' do
+        before do
+          a_child.save
+          a.copy_fields_to(b, :address, :copyable_childs, overwrite_nil_only: true)
+          b.save
+          b.reload
+        end
+
+        it 'should support overwrite_nil_only' do
+          expect(b.address).to eq '1'
+          expect(b_child.label).to eq 'a'
+        end
+
+      end
+    end
+  end
 end
