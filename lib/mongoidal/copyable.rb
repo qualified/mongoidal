@@ -21,6 +21,10 @@ module Mongoidal
       self.class.new(reset_ids(attributes.dup))
     end
 
+    # copies the fields from the instance to the target. Will reset any _id attributes that it
+    # finds along the way. Two flags are available:
+    # overwrite_nil_only - set to true if only nil target values should be overwritten
+    # ignore_nil_source - set to false if the target should be overwritten with nil values from the source
     def copy_fields_to(target, *fields, overwrite_nil_only: false, ignore_nil_source: true)
       fields.each do |field|
         if not overwrite_nil_only or target[field].nil?
