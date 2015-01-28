@@ -96,6 +96,36 @@ describe Mongoidal::Copyable do
         end
 
       end
+
+      describe 'ignore_nil_source' do
+        context 'when true' do
+          before do
+            a.address = nil
+            b.address = 'test'
+            a.copy_fields_to(b, :address)
+            b.save
+            b.reload
+          end
+
+          it 'should not have replaced address' do
+            expect(b.address).to eq 'test'
+          end
+        end
+
+        context 'when false' do
+          before do
+            a.address = nil
+            b.address = 'test'
+            a.copy_fields_to(b, :address, ignore_nil_source: false)
+            b.save
+            b.reload
+          end
+
+          it 'should not have replaced address' do
+            expect(b.address).to be_nil
+          end
+        end
+      end
     end
   end
 end
