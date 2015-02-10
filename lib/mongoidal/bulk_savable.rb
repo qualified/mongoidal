@@ -16,13 +16,14 @@ module Mongoidal
           embed_attrs[embed].each do |attrs|
             collection = self.send(embed)
             existing = collection.where(id: attrs[:id] || attrs['id']).first
+            deleted = attrs[:deleted] || attrs['deleted']
             if existing
-              if attrs[:deleted] || attrs['deleted']
+              if deleted
                 to_delete << existing
               else
                 existing.assign_attributes(attrs)
               end
-            else
+            elsif !deleted
               collection.build(attrs)
             end
           end
