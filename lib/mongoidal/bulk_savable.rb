@@ -15,9 +15,9 @@ module Mongoidal
         if embed_attrs[embed]
           embed_attrs[embed].each do |attrs|
             collection = self.send(embed)
-            existing = collection.where(id: attrs[:id]).first
+            existing = collection.where(id: attrs[:id] || attrs['id']).first
             if existing
-              if attrs[:deleted]
+              if attrs[:deleted] || attrs['deleted']
                 to_delete << existing
               else
                 existing.assign_attributes(attrs)
