@@ -17,6 +17,12 @@ end
 describe Mongoidal::EnumField do
   subject(:example) { EnumExample.new(bin: :hungry, role: :admin) }
 
+  describe '.enum_fields' do
+    it 'should define field name and values as a hash' do
+      expect(EnumExample.enum_fields[:role][:values]).to be EnumExample.role_values
+    end
+  end
+
   describe 'allow nil values' do
     before { example.role = nil }
     it { should be_valid }

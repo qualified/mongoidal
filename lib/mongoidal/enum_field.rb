@@ -3,6 +3,11 @@ module Mongoidal
     extend ActiveSupport::Concern
 
     module ClassMethods
+
+      def enum_fields
+        @enum_fields ||= {}
+      end
+
       protected
 
       def enum_field(field_name, options = {})
@@ -16,6 +21,10 @@ module Mongoidal
 
         values = options[:values]
         actual_values = values.dup
+
+        # keep track of enum fields so that they can be iterated later
+        enum_fields[field_name] = options
+
 
         # mongoid 3.1.0 now validates against the pre-serialized value meaning that
         # if a string is ever used to set a value then it's symbol version will not be tested against.
