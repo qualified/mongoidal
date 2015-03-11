@@ -81,11 +81,17 @@ module Mongoidal
           end
 
           define_singleton_method "#{field_name}_value_translate" do |val|
-            self.translate("#{field_name}.#{val}")
+            if options[:i18n]
+              I18n.t("#{options[:i18n]}.#{val}")
+            elsif respond_to?(:translate)
+              self.translate("#{field_name}.#{val}")
+            else
+              val
+            end
           end
 
           define_singleton_method "#{field_name}_value_t" do |val|
-            self.translate("#{field_name}.#{val}")
+            self.send("#{field_name}_value_translate", val)
           end
         end
       end
