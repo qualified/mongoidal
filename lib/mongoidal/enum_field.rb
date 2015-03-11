@@ -68,31 +68,29 @@ module Mongoidal
           end
         end
 
-        if respond_to?(:translate)
-          # allows easy access to translations
-          define_method "#{field_name}_translate" do |val = nil|
-            val ||= self.__send__ field_name
-            self.class.__send__ "#{field_name}_value_translate", val
-          end
+        # allows easy access to translations
+        define_method "#{field_name}_translate" do |val = nil|
+          val ||= self.__send__ field_name
+          self.class.__send__ "#{field_name}_value_translate", val
+        end
 
-          #alias translate method to short form
-          define_method "#{field_name}_t" do |val = nil|
-            self.__send__ "#{field_name}_translate", val
-          end
+        #alias translate method to short form
+        define_method "#{field_name}_t" do |val = nil|
+          self.__send__ "#{field_name}_translate", val
+        end
 
-          define_singleton_method "#{field_name}_value_translate" do |val|
-            if options[:i18n]
-              I18n.t("#{options[:i18n]}.#{val}")
-            elsif respond_to?(:translate)
-              self.translate("#{field_name}.#{val}")
-            else
-              val
-            end
+        define_singleton_method "#{field_name}_value_translate" do |val|
+          if options[:i18n]
+            I18n.t("#{options[:i18n]}.#{val}")
+          elsif respond_to?(:translate)
+            self.translate("#{field_name}.#{val}")
+          else
+            val.to_s.humanize
           end
+        end
 
-          define_singleton_method "#{field_name}_value_t" do |val|
-            self.send("#{field_name}_value_translate", val)
-          end
+        define_singleton_method "#{field_name}_value_t" do |val|
+          self.send("#{field_name}_value_translate", val)
         end
       end
     end
