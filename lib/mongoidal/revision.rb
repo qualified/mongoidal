@@ -9,13 +9,6 @@ module Mongoidal
 
       field :created_at, type: Time
 
-      belongs_to :user, inverse_of: nil
-
-      # always require user unless its the base revision. We still try to determine the user for the
-      # base revision but since its not guaranteed that revise! will be called we may not be able
-      # to determine the user.
-      validates_presence_of :user, unless: :base_revision?
-
       field :number,              type: Integer
       validates_presence_of :number
       validates_uniqueness_of :number

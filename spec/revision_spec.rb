@@ -8,6 +8,7 @@ describe Revision do
   before do
     embedded.name = 'b'
     example.name = 'b'
+    example.valid?
     example.revise!
     example.name = 'c'
     example.revise!

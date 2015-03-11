@@ -5,6 +5,7 @@ require 'mongoidal/class_logger'
 require "mongoidal/field_callbacks"
 require 'mongoidal/instance_callbacks'
 require "mongoidal/helpers"
+require "mongoidal/translations"
 require "mongoidal/sym_array"
 require 'mongoidal/slug_field'
 require 'mongoidal/tag_field'

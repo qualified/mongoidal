@@ -38,22 +38,6 @@ module Mongoidal
       end
     end
 
-    # used to try to determine the user for the base revision. Can be overridden by
-    # classes to customize. By default it will try to use the typical fields.
-    def base_revision_user_id
-      if respond_to? :created_by_id
-        created_by_id
-      elsif respond_to? :user_id
-        user_id
-      elsif respond_to? :author_id
-        author_id
-      elsif respond_to? :actor_id
-        actor_id
-      elsif User.respond_to?(:current)
-        User.current.try(:id)
-      end
-    end
-
     def revisable_fields
       self.class.revisable_fields
     end
@@ -214,7 +198,6 @@ module Mongoidal
       if has_revised_changes?
         revision = revisions.build
         revision.number = last_revision_number + 1
-        revision.user = User.current
         revision.created_at = Time.now.utc
 
         changes.each do |k, v|
@@ -230,7 +213,7 @@ module Mongoidal
     def build_base_revision
       raise RuntimeError, 'base revision already exists' if revisions.any?
 
-      revision = revisions.build(number: 0, user_id: base_revision_user_id)
+      revision = revisions.build(number: 0)
       revision.created_at = self.created_at
 
       changes = revised_changes
