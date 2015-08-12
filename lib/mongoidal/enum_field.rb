@@ -34,10 +34,24 @@ module Mongoidal
           inclusion_values << v.to_s if v.is_a?(Symbol)
         end
 
-        validates_inclusion_of field_name,
-                               in: inclusion_values,
-                               message: options.has_key?(:message) ? options[:message] : 'invalid value',
-                               allow_nil: options[:allow_nil]
+        if options[:type] == Array
+          validate do
+            value = self.send(field_name)
+            if value
+              if value.is_a?(Array)
+                extras = value - inclusion_values
+                errors.add(field_name, "values #{extras} are not allowed") if extras.any?
+              else
+                errors.add(field_name, 'must be an array')
+              end
+            end
+          end
+        else
+          validates_inclusion_of field_name,
+                                 in: inclusion_values,
+                                 message: options.has_key?(:message) ? options[:message] : 'invalid value',
+                                 allow_nil: options[:allow_nil]
+        end
 
         ## helper methods:
 
@@ -47,13 +61,15 @@ module Mongoidal
 
         # define the is_? shortcut methods
         unless options[:omit_shortcuts]
-          suffix = options[:suffix] == false ? '' : options[:suffix] || "_#{field_name}"
+          default_suffix = "_#{field_name}"
+          default_suffix = default_suffix.singularize if options[:type] == Array
+          suffix = options[:suffix] == false ? '' : options[:suffix] || default_suffix
           prefix = options[:prefix] == false ? '' : options[:prefix] || 'is_'
           values.each do |key|
             unless key.blank?
               define_method "#{prefix}#{key}#{suffix}?" do
                 val = self.__send__ field_name
-                val == key
+                options[:type] == Array ? val.include?(key) : val == key
               end
             end
           end
@@ -71,6 +87,7 @@ module Mongoidal
         # allows easy access to translations
         define_method "#{field_name}_translate" do |val = nil|
           val ||= self.__send__ field_name
+          val = val.first if val.is_a?(Array)
           self.class.__send__ "#{field_name}_value_translate", val
         end
 

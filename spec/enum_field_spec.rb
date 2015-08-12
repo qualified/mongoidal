@@ -12,6 +12,8 @@ class EnumExample
 
   enum_field :bin, type: Symbol, values: [:hungry, :bored]
 
+  enum_field :grades, type: Array, values: [:a, :b, :c, :d, :e, :f]
+
 end
 
 describe Mongoidal::EnumField do
@@ -40,9 +42,23 @@ describe Mongoidal::EnumField do
     end
   end
 
+  describe 'valid values' do
+    it 'should handle arrays' do
+      example.grades = [:a, :b]
+      expect(example).to be_valid
+    end
+  end
+
   describe 'invalid values' do
-    before { example.bin = :i_dont_exist }
-    it { should be_invalid }
+    context 'Symbols' do
+      before { example.bin = :i_dont_exist }
+      it { should be_invalid }
+    end
+
+    context 'Arrays' do
+      before { example.grades = [:a, :z] }
+      it { should be_invalid }
+    end
   end
 
   describe 'is_? methods' do
@@ -51,6 +67,13 @@ describe Mongoidal::EnumField do
 
     its(:is_hungry_bin?) { should be true }
     its(:is_bored_bin?) { should be false }
+
+    context 'array enums' do
+      before { example.grades = [:a, :c] }
+      its(:is_a_grade?) { should be true }
+      its(:is_b_grade?) { should be false }
+      its(:is_c_grade?) { should be true }
+    end
   end
 
   describe 'values' do
