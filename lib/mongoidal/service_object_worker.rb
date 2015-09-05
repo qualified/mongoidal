@@ -50,10 +50,18 @@ module Mongoidal
     def unpack_param(param)
       value = case param['_']
         when 'root_doc'
-          param['class_name'].to_const.where(id: param['id']).first
+          if param['json']
+            deserialize_doc(param)
+          else
+            param['class_name'].to_const.where(id: param['id']).first
+          end
 
         when 'embedded_doc'
-          expand_embedded_doc(param)
+          if param['json']
+            deserialize_doc(param)
+          else
+            expand_embedded_doc(param)
+          end
 
         when 'class'
           param['class_name'].to_const
@@ -64,6 +72,20 @@ module Mongoidal
 
       logger.warn "unable to find #{param}" unless value
       value
+    end
+
+    # if json was included than the doc was serialized with state included, so reload that state now
+    # NOTE that this method does not reestablish parent relationships for embedded documents
+    def deserialize_doc(param)
+      param['class_name'].to_const.new.tap do |doc|
+         doc.attributes = JSON.parse(param['json'])
+        if param['destroyed']
+          # mark the doc as being destroyed
+          def doc.destroyed?
+            true
+          end
+        end
+      end
     end
 
     # uses the path info passed in as a way of recovering the embedded document

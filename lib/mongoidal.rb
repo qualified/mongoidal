@@ -24,3 +24,14 @@ require 'mongoidal/embedded_errors'
 module Mongoidal
   # Your code goes here...
 end
+
+# fix mongoid 3 serialization
+module BSON
+  class ObjectId
+    def as_json(*args)
+      to_s
+    end
+
+    alias :to_json :as_json
+  end
+end

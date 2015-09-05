@@ -54,6 +54,20 @@ describe Mongoidal::ServiceObjectWorker do
       end
     end
 
+    context 'expanding a destroyed root document (serialized state)' do
+      before { root_document.destroy }
+      let(:params) { pack_params(root_document) }
+
+      it 'should return the root document' do
+        expect(subject.first).to eq root_document
+        expect(subject.first).to_not be root_document
+      end
+
+      it 'should mark the document as destroyed' do
+        expect(subject.first).to be_destroyed
+      end
+    end
+
     context 'expanding an embedded document' do
       let(:params) { pack_params(embed_document) }
 

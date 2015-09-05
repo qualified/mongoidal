@@ -19,9 +19,9 @@ module Mongoidal
       else
         @executed = true
         start = Time.now
-        logger.debug 'executing...'
+        logger.info 'executing...'
         on_execute(*args)
-        logger.debug "executed - took #{Time.now - start} seconds to complete"
+        logger.info "executed - took #{Time.now - start} seconds to complete"
       end
 
       self
@@ -43,7 +43,9 @@ module Mongoidal
     end
 
     # packs up the params so that they can go on a trip! Basically it stores the information needed
-    # to find the models within the database, once they are unpacked by the worker.
+    # to find the models within the database, once they are unpacked by the worker. If the model.destroyed?
+    # method is true, then it will also pack the attributes and rebuild the object once unpacked, instead
+    # of finding it within the database (needed since it no longer exists within the database).
     def pack_params(args)
       args.map do |arg|
         if arg.is_a? Mongoid::Document
@@ -66,7 +68,9 @@ module Mongoidal
       {'_' => 'root_doc',
        'class_name' => doc.class.name,
        'id' => doc.id.to_s
-      }
+      }.tap do |params|
+        append_destroyed_document_params(doc, params)
+      end
     end
 
     def worker_embedded_document_params(doc)
@@ -80,7 +84,16 @@ module Mongoidal
        'parent_id' => doc.parent_model.id.to_s,
        'class_name' => doc.class.name,
        'id' => doc.id.to_s
-      }
+      }.tap do |params|
+        append_destroyed_document_params(doc, params)
+      end
+    end
+
+    def append_destroyed_document_params(doc, params)
+      if doc.destroyed?
+        params['destroyed'] = true
+        params['json'] = doc.attributes.to_json
+      end
     end
 
     class WorkerError < StandardError
