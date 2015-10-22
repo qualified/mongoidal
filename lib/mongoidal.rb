@@ -19,6 +19,7 @@ require 'mongoidal/revision'
 require 'mongoidal/service_object'
 require 'mongoidal/service_object_worker'
 require 'mongoidal/bulk_savable'
+require 'mongoidal/nesting'
 require 'mongoidal/embedded_errors'
 
 module Mongoidal
