@@ -49,8 +49,8 @@ module Mongoidal
     # Any items not present within the new array will be destroyed
     def nested_save!(attributes, *embeds, &block)
       to_delete = nested_assign(attributes, *embeds)
-      block.call(to_delete) if block_given?
       if valid?
+        block.call(to_delete) if block_given?
         to_delete.each(&:destroy)
         save!
       end
