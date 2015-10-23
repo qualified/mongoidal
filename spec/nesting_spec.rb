@@ -14,6 +14,7 @@ class NestKid
 
   field :name, type: String
   field :age, type: Integer
+  field :description, type: String
 
   def on_updated(&block)
     @on_updated = block
@@ -44,7 +45,7 @@ describe Mongoidal::Nesting do
         data = {
           kids: [{
              id: kid1.id.to_s,
-             age: 3
+             description: 'test'
            },{
              name: 'Kid 3'
            }]
@@ -57,7 +58,11 @@ describe Mongoidal::Nesting do
       end
 
       it 'should update existing matched data' do
-        expect(kid1.age).to eq 3
+        expect(kid1.description).to eq 'test'
+      end
+
+      it 'should not overwrite attributes that were not supplied' do
+        expect(kid1.age).to eq 1
       end
 
       it 'should have created a new record for new data' do
