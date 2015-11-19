@@ -12,8 +12,8 @@ module Mongoidal
     end
 
     module ClassMethods
-      def unpermitted
-        @unpermitted ||= Set.new.tap do |unpermitted|
+      def unpermitted_fields
+        @unpermitted_fields ||= Set.new.tap do |unpermitted|
           unpermitted.merge(Permittable.unpermitted_fields)
           self.ancestors.each do |ancestor|
             if ancestor != self and ancestor.respond_to? :unpermitted
@@ -23,7 +23,7 @@ module Mongoidal
         end
       end
 
-      def unpermit(*fields)
+      def unpermitted(*fields)
         fields.each do |field|
           if field.respond_to? :name
             field = field.name.to_sym
@@ -32,18 +32,17 @@ module Mongoidal
           relation = self.relations[field.to_s]
 
           if relation and relation.macro == :belongs_to
-            unpermitted << "#{field}_id".to_sym
+            unpermitted_fields << "#{field}_id".to_sym
           else
-            unpermitted << field
+            unpermitted_fields << field
           end
-
         end
       end
 
       def permit_fields!(id: nil, embeds: true)
         permitted = []
         nested = {}
-        fields = self.fields.keys.map(&:to_sym) - unpermitted.to_a
+        fields = self.fields.keys.map(&:to_sym) - unpermitted_fields.to_a
         fields.each do |field|
           type = self.fields[field.to_s].options[:type]
           if type == Array

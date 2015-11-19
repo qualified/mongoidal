@@ -5,7 +5,7 @@ class PermittableExample
   include Mongoidal::Permittable
   include Mongoidal::EnumField
 
-  unpermit enum_field :bin, type: Symbol, values: [:hungry, :bored]
+  unpermitted enum_field :bin, type: Symbol, values: [:hungry, :bored]
 
   field :name
 
@@ -24,7 +24,7 @@ end
 describe Mongoidal::Permittable do
   context 'RootDocuments' do
     subject { PermittableExample }
-    its(:unpermitted) { should include :bin }
+    its(:unpermitted_fields) { should include :bin }
     its(:permitted_fields) { should include :name }
     its(:permitted_fields) { should_not include :id }
   end
