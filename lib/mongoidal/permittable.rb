@@ -28,7 +28,7 @@ module Mongoidal
         end
       end
 
-      def permit!(id: nil, embeds: true)
+      def permit_fields!(id: nil, embeds: true)
         permitted = []
         nested = {}
         fields = self.fields.keys.map(&:to_sym) - unpermitted.to_a
@@ -40,7 +40,6 @@ module Mongoidal
             permitted << field
           end
         end
-
 
         # support embedded
         if embeds

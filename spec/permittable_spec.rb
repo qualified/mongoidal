@@ -9,7 +9,7 @@ class PermittableExample
 
   field :name
 
-  permit!
+  permit_fields!
 end
 
 class NestedPermittableExample
@@ -18,7 +18,7 @@ class NestedPermittableExample
 
   embedded_in :permittable_example
 
-  permit!
+  permit_fields!
 end
 
 describe Mongoidal::Permittable do
