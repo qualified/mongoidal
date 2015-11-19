@@ -1,4 +1,9 @@
 module Mongoidal
+  # provides utility methods for easily marking fields as not being permittable. By calling permit_fields! after
+  # defining all of the fields/relations in the class, a permitted_fields class method will be defined which can be
+  # used with strong params to have a default set of fields.
+  # Best practice is to unpermit any field that may have cases where it should not be permittable, and instead allow
+  # the controller to add that field as permited as needed.
   module Permittable
     extend ActiveSupport::Concern
 
@@ -24,7 +29,14 @@ module Mongoidal
             field = field.name.to_sym
           end
 
-          unpermitted << field
+          relation = self.relations[field.to_s]
+
+          if relation and relation.macro == :belongs_to
+            unpermitted << "#{field}_id".to_sym
+          else
+            unpermitted << field
+          end
+
         end
       end
 
@@ -50,10 +62,11 @@ module Mongoidal
               # if id is nil, then we will auto-include it if this is an embedded document.
               if v.macro == :embedded_in
                 id = true if id.nil?
-              elsif !unpermitted.include?(k.to_sym)
-                if v.macro == :embeds_one or v.macro == :embeds_many
-                  v.class_name.to_const.respond_to?(:permitted_fields)
-                end
+                false
+              elsif unpermitted.include?(k.to_sym)
+                false
+              elsif v.macro == :embeds_one or v.macro == :embeds_many
+                v.class_name.to_const.respond_to?(:permitted_fields)
               end
 
             end.map {|k, v| k}
@@ -61,7 +74,10 @@ module Mongoidal
 
           embeds.each do |embed|
             permitted << embed
-            nested[embed.to_sym] = self.relations[embed.to_s].class_name.to_const.permitted_fields
+            eclass = self.relations[embed.to_s].class_name.to_const
+            if eclass.respond_to? :permitted_fields
+              nested[embed.to_sym] = eclass.permitted_fields
+            end
           end
         end
 
