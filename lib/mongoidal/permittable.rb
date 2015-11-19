@@ -28,7 +28,7 @@ module Mongoidal
         end
       end
 
-      def permit!(id: false, embeds: true)
+      def permit!(id: nil, embeds: true)
         permitted = []
         nested = {}
         fields = self.fields.keys.map(&:to_sym) - unpermitted.to_a
@@ -41,7 +41,6 @@ module Mongoidal
           end
         end
 
-        permitted << :id if id
 
         # support embedded
         if embeds
@@ -49,11 +48,15 @@ module Mongoidal
           if embeds == true
             # only select the embeds relations that have a permitted_fields method on their class
             embeds = self.relations.select do |k, v|
-              unless unpermitted.include?(k.to_sym)
+              # if id is nil, then we will auto-include it if this is an embedded document.
+              if v.macro == :embedded_in
+                id = true if id.nil?
+              elsif !unpermitted.include?(k.to_sym)
                 if v.macro == :embeds_one or v.macro == :embeds_many
                   v.class_name.to_const.respond_to?(:permitted_fields)
                 end
               end
+
             end.map {|k, v| k}
           end
 
@@ -63,6 +66,7 @@ module Mongoidal
           end
         end
 
+        permitted << :id if id
         permitted << nested if nested.present?
 
         self.define_singleton_method :permitted_fields do

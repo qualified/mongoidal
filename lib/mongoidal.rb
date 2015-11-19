@@ -22,6 +22,7 @@ require 'mongoidal/bulk_savable'
 require 'mongoidal/nesting'
 require 'mongoidal/embedded_errors'
 require 'mongoidal/transactional'
+require 'mongoidal/permittable'
 
 module Mongoidal
   # Your code goes here...
