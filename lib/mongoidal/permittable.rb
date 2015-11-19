@@ -58,25 +58,23 @@ module Mongoidal
           # if embeds is true
           if embeds == true
             # only select the embeds relations that have a permitted_fields method on their class
-            embeds = self.relations.select do |k, v|
+            embeds = self.relations.each do |k, v|
               # if id is nil, then we will auto-include it if this is an embedded document.
               if v.macro == :embedded_in
                 id = true if id.nil?
-                false
-              elsif unpermitted.include?(k.to_sym)
-                false
-              elsif v.macro == :embeds_one or v.macro == :embeds_many
-                v.class_name.to_const.respond_to?(:permitted_fields)
+              else
+                unless unpermitted.include?(k.to_sym)
+                  if v.macro == :embeds_one or v.macro == :embeds_many
+                    if v.class_name.to_const.respond_to?(:permitted_fields)
+                      permitted << k.to_sym
+                      eclass = self.relations[k].class_name.to_const
+                      if eclass.respond_to? :permitted_fields
+                        nested[k.to_sym] = eclass.permitted_fields
+                      end
+                    end
+                  end
+                end
               end
-
-            end.map {|k, v| k}
-          end
-
-          embeds.each do |embed|
-            permitted << embed
-            eclass = self.relations[embed.to_s].class_name.to_const
-            if eclass.respond_to? :permitted_fields
-              nested[embed.to_sym] = eclass.permitted_fields
             end
           end
         end
