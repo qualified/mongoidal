@@ -16,12 +16,11 @@ module Mongoidal
       to_delete = []
 
       assign_attributes(root_attrs)
-      embeds.each do |k, relation|
 
+      embeds.each do |k, relation|
         if embed_attrs[relation.name]
           collection = self.send(relation.name)
           matched = []
-
           embed_attrs[relation.name].each do |attrs|
             existing = find_existing_embedded(relation, collection, attrs)
 

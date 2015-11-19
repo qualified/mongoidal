@@ -3,7 +3,7 @@ require 'spec_helper'
 class NestParent
   include Mongoid::Document
   include Mongoidal::Nesting
-  embeds_many :kids, class_name: 'NestKid'
+  embeds_many :kids, class_name: 'NestKid', cascade_callbacks: true
   embeds_one :favorite, class_name: 'NestKid'
   field :name, type: String
 end
@@ -16,12 +16,10 @@ class NestKid
   field :age, type: Integer
   field :description, type: String
 
-  def on_updated(&block)
-    @on_updated = block
-  end
+  attr_reader :update_fired
 
   after_update do
-    @on_updated.call(self) if @on_updated
+    @update_fired = true
   end
 
   def self.find_within_collection(collection, attrs)
@@ -59,6 +57,11 @@ describe Mongoidal::Nesting do
 
       it 'should update existing matched data' do
         expect(kid1.description).to eq 'test'
+      end
+
+      it 'should call update callback' do
+        expect(kid1.description).to eq 'test'
+        expect(kid1.update_fired).to be true
       end
 
       it 'should not overwrite attributes that were not supplied' do
