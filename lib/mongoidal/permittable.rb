@@ -7,83 +7,52 @@ module Mongoidal
   module Permittable
     extend ActiveSupport::Concern
 
-    def self.unpermitted_fields
-      @unpermitted_fields ||= [:_id, :_type, :created_at, :updated_at]
-    end
-
     module ClassMethods
-      def unpermitted_fields
-        @unpermitted_fields ||= Set.new.tap do |unpermitted|
-          unpermitted.merge(Permittable.unpermitted_fields)
+      def permitted_fields
+        @permitted_fields ||= [].tap do |permitted|
           self.ancestors.each do |ancestor|
-            if ancestor != self and ancestor.respond_to? :unpermitted
-              unpermitted.merge(ancestor.unpermitted)
+            if ancestor != self and ancestor.respond_to? :permitted_fields
+              permitted.concat(ancestor.permitted_fields)
             end
           end
         end
       end
 
-      def unpermitted(*fields)
-        fields.each do |field|
-          if field.respond_to? :name
-            field = field.name.to_sym
+      def permitted(*fields)
+        fields.each do |name|
+          if name.respond_to? :name
+            name = name.name.to_sym
           end
 
-          relation = self.relations[field.to_s]
+          relation = self.relations[name.to_s]
 
-          if relation and relation.macro == :belongs_to
-            unpermitted_fields << "#{field}_id".to_sym
+          if relation
+            if relation.macro == :belongs_to
+              permitted_fields << "#{name}_id".to_sym
+            elsif relation.macro == :embeds_one or relation.macro == :embeds_many
+              klass = relation.class_name.to_const 
+              if klass.respond_to?(:permitted_fields)
+                permitted_fields << name
+                permitted_fields << {name => klass.permitted_fields}
+              end
+            end
           else
-            unpermitted_fields << field
+            field = self.fields[name.to_s]
+            if field
+              if field.options[:type] == Array or field.options[:type].nil?
+                permitted_fields << name
+                permitted_fields << {name => []}
+              else
+                permitted_fields << name
+              end
+            else
+              permitted_fields << name
+            end
           end
         end
       end
 
       def permit_fields!(id: nil, embeds: true)
-        permitted = []
-        nested = {}
-        fields = self.fields.keys.map(&:to_sym) - unpermitted_fields.to_a
-        fields.each do |field|
-          type = self.fields[field.to_s].options[:type]
-          if type == Array
-            nested[field] = []
-          else
-            permitted << field
-          end
-        end
-
-        # support embedded
-        if embeds
-          # if embeds is true
-          if embeds == true
-            # only select the embeds relations that have a permitted_fields method on their class
-            embeds = self.relations.each do |k, v|
-              # if id is nil, then we will auto-include it if this is an embedded document.
-              if v.macro == :embedded_in
-                id = true if id.nil?
-              else
-                unless unpermitted.include?(k.to_sym)
-                  if v.macro == :embeds_one or v.macro == :embeds_many
-                    if v.class_name.to_const.respond_to?(:permitted_fields)
-                      permitted << k.to_sym
-                      eclass = self.relations[k].class_name.to_const
-                      if eclass.respond_to? :permitted_fields
-                        nested[k.to_sym] = eclass.permitted_fields
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
-
-        permitted << :id if id
-        permitted << nested if nested.present?
-
-        self.define_singleton_method :permitted_fields do
-          permitted
-        end
       end
     end
   end
