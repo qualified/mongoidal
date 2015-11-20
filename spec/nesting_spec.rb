@@ -77,6 +77,25 @@ describe Mongoidal::Nesting do
       parent.nested_save!(kids:[{name: 'Kid 1', age: 4}])
       expect(kid1.age).to eq 4
     end
+
+    describe 'preserving update order' do
+      before do
+        data = {
+          kids: [
+            { name: 'Kid 3' },
+            {id: kid1.id.to_s, description: '123' }
+          ]
+        }
+        parent.nested_save!(data)
+      end
+
+      it 'should preserve order' do
+        parent.reload
+        expect(parent.kids.first.name).to eq 'Kid 3'
+        expect(parent.kids.last.description).to eq '123'
+        expect(parent.kids.last.id).to eq kid1.id
+      end
+    end
   end
 
   context 'embeds_one' do

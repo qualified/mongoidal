@@ -32,6 +32,8 @@ module Mongoidal
             end
           end
 
+          self.send("#{relation.name}=", matched)
+
           collection.each do |nested|
             to_delete << nested unless matched.include? nested
           end
