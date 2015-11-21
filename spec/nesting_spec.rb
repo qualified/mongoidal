@@ -15,6 +15,7 @@ class NestKid
   field :name, type: String
   field :age, type: Integer
   field :description, type: String
+  field :_position, type: Integer
 
   attr_reader :update_fired
 
@@ -86,14 +87,15 @@ describe Mongoidal::Nesting do
             {id: kid1.id.to_s, description: '123' }
           ]
         }
-        parent.nested_save!(data)
+        parent.nested_save!(data, position: :_position)
       end
 
-      it 'should preserve order' do
+      it 'should preserve order using _position' do
         parent.reload
-        expect(parent.kids.first.name).to eq 'Kid 3'
-        expect(parent.kids.last.description).to eq '123'
-        expect(parent.kids.last.id).to eq kid1.id
+        kids = parent.kids.order_by('_position ASC').to_a
+        expect(kids.first.name).to eq 'Kid 3'
+        expect(kids.last.description).to eq '123'
+        expect(kids.last.id).to eq kid1.id
       end
     end
   end

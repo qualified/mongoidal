@@ -6,7 +6,7 @@ module Mongoidal
     # deleted models are not actually destroyed, but instead returned within a flat array which
     # can later be destroyed.
     # If a specific set of embed relations are not provided then all embeds_many relations will be used
-    def nested_assign(attributes)
+    def nested_assign(attributes, position: nil)
       attributes = HashWithIndifferentAccess.new(attributes)
       embeds = self.class.relations.select {|k, v| v.macro == :embeds_many }
 
@@ -17,25 +17,35 @@ module Mongoidal
 
       assign_attributes(root_attrs)
 
-      embeds.each do |k, relation|
-        if embed_attrs[relation.name]
-          collection = self.send(relation.name)
-          matched = []
-          embed_attrs[relation.name].each do |attrs|
-            existing = find_existing_embedded(relation, collection, attrs)
+      # modifying collections is immediate (called before save!, so we want to make sure everything is valid first)
+      if valid?
+        embeds.each do |k, relation|
+          if embed_attrs[relation.name]
+            matched = []
+            collection = self.send(relation.name)
 
-            if existing
-              existing.assign_attributes(attrs)
-              matched << existing
-            else
-              matched << collection.build(attrs)
+            pos = 0
+            embed_attrs[relation.name].each do |attrs|
+              existing = find_existing_embedded(relation, collection, attrs)
+
+              if existing
+                existing.assign_attributes(attrs)
+                matched << existing
+              else
+                matched << collection.build(attrs)
+              end
+
+              if position
+                # special attribute for setting sort order
+                if matched.last.respond_to?(position)
+                  matched.last.send("#{position}=", pos += 1)
+                end
+              end
             end
-          end
 
-          self.send("#{relation.name}=", matched)
-
-          collection.each do |nested|
-            to_delete << nested unless matched.include? nested
+            collection.each do |nested|
+              to_delete << nested unless matched.include? nested
+            end
           end
         end
       end
