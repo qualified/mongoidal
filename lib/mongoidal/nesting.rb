@@ -53,8 +53,8 @@ module Mongoidal
       if valid?
         block.call(to_delete) if block_given?
         to_delete.each(&:destroy)
-        save!
       end
+      save!
     end
 
     protected
