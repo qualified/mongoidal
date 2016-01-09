@@ -35,11 +35,9 @@ module Mongoidal
                 matched << collection.build(attrs)
               end
 
-              if position
-                # special attribute for setting sort order
-                if matched.last.respond_to?(position)
-                  matched.last.send("#{position}=", pos += 1)
-                end
+              # special attribute for setting sort order
+              if position and matched.last.respond_to?(position)
+                matched.last.send("#{position}=", pos += 1)
               end
             end
 

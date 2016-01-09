@@ -16,13 +16,13 @@ require 'mongoidal/embedded_document'
 require 'mongoidal/copyable'
 require 'mongoidal/revisable'
 require 'mongoidal/revision'
-require 'mongoidal/service_object'
-require 'mongoidal/service_object_worker'
 require 'mongoidal/bulk_savable'
 require 'mongoidal/nesting'
 require 'mongoidal/embedded_errors'
 require 'mongoidal/transactional'
 require 'mongoidal/permittable'
+# for now we are going to require manually
+# require 'mongoidal/identification'
 
 module Mongoidal
   # Your code goes here...

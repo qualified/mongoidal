@@ -4,6 +4,10 @@ module Mongoidal
 
     @@models = []
 
+    def to_s
+      "<#{self.class.name}:#{id}>"
+    end
+
     # keep track of all of the models that extend from this one
     def self.included base
       @@models << base unless base.name.include? 'Document'
