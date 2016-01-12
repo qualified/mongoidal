@@ -1,6 +1,7 @@
 module Mongoidal
   module Helpers
     extend ActiveSupport::Concern
+    include Mongoidal::Identification
 
     @@models = []
 

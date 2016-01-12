@@ -4,6 +4,7 @@ require 'mongoidal/string_extensions'
 require 'mongoidal/class_logger'
 require "mongoidal/field_callbacks"
 require 'mongoidal/instance_callbacks'
+require "mongoidal/global_id"
 require "mongoidal/helpers"
 require "mongoidal/translations"
 require "mongoidal/sym_array"
