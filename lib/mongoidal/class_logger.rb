@@ -33,9 +33,15 @@ module Mongoidal
         @instance = instance
       end
 
-      def method_missing(method, *args)
-        args[0] = format(args[0]) if args.any?
-        Rails.logger.send method, *args
+      def method_missing(method, *args, &block)
+        args[0] = format(args[0])
+        if block_given?
+          Rails.logger.send method do
+            format(block.call)
+          end
+        else
+          Rails.logger.send method, *args
+        end
       end
 
       def id

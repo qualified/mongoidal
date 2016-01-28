@@ -33,6 +33,7 @@ module Mongoidal
 
       def after_field_save(field, method = nil, &block)
         around_save do |model, do_save|
+          # prevent recursion. Note that this means we can only support one after_field_save per field
           unless model.fields_after_save.include? field
             if model.__send__ "#{field}_changed?"
               model.fields_after_save << field
@@ -40,7 +41,7 @@ module Mongoidal
               if method
                 model.__send__(method)
               else
-                block.call(model, (model.__send__ "#{field}_change"))
+                model.instance_exec(model, (model.__send__ "#{field}_change"), &block)
               end
               model.fields_after_save.delete(field)
             else

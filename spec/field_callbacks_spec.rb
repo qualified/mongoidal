@@ -14,6 +14,9 @@ class FieldCallbacksExample
   end
 
   after_field_save :name, :increase_count
+  after_field_save :before_count do
+    self.title = 'after'
+  end
 
   protected
 
@@ -33,6 +36,7 @@ describe Mongoidal::FieldCallbacks do
 
     its(:before_count) { should eq 1 }
     its(:after_count) { should eq 1 }
+    its(:title) { should eq 'after' }
   end
 
   context 'when name is not saved' do

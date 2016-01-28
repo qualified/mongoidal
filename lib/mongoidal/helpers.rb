@@ -1,8 +1,13 @@
 module Mongoidal
   module Helpers
     extend ActiveSupport::Concern
+    include Mongoidal::Identification
 
     @@models = []
+
+    def to_s
+      "<#{self.class.name}:#{id}>"
+    end
 
     # keep track of all of the models that extend from this one
     def self.included base

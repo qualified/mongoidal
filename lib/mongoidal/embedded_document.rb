@@ -1,6 +1,7 @@
 module Mongoidal
   module EmbeddedDocument
     extend ActiveSupport::Concern
+    include Mongoidal::Helpers
 
     included do
       include Mongoid::Document
