@@ -60,5 +60,23 @@ module Mongoidal
 
       reverted
     end
+
+    module ClassMethods
+      def load_destroyed(attributes)
+        # cleanup the ID
+        if attributes['_id'].is_a?(Hash)
+          attributes['_id'] = attributes.delete('_id')['$oid']
+        end
+
+        # we need to remove any non support attributes if this is not a dynamic model
+        unless self.ancestors.include?(Mongoid::Attributes::Dynamic)
+          attributes = attributes.slice(*self.fields.keys)
+        end
+
+        self.new(attributes).tap do |instance|
+          instance.instance_variable_set('@destroyed', true)
+        end
+      end
+    end
   end
 end
