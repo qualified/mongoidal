@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "mongoid"
+  spec.add_dependency "mongoid", '~> 5.1.0'
   spec.add_dependency "mongoid_slug"
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "sidekiq"
@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-its"
-  spec.add_development_dependency "mongoid-rspec", '~> 2.0.0.rc1'
+  spec.add_development_dependency "mongoid-rspec"
 end

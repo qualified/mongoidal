@@ -54,6 +54,7 @@ describe Mongoidal::Nesting do
 
       it 'should delete any items that were not matched' do
         expect(kid2).to be_destroyed
+        expect(parent.reload.kids.where(age: 2)).to_not be_any
       end
 
       it 'should update existing matched data' do
