@@ -135,7 +135,7 @@ module Mongoidal
     end
 
     def revise(message: nil, tag: nil)
-      revision = _revise(message, tag)
+      revision = prepare_revision(message, tag)
       result = respond_to?(:store) ? store : save
       if result
         revision
@@ -146,7 +146,7 @@ module Mongoidal
     end
 
     def revise!(message: nil, tag: nil)
-      revision = _revise(message, tag)
+      revision = prepare_revision(message, tag)
       respond_to?(:store!) ? store! : save!
       revision
     end
@@ -155,9 +155,7 @@ module Mongoidal
       @revision_tree ||= RevisionTree.new(self)
     end
 
-    protected
-
-    def _revise(message, tag)
+    def prepare_revision(message, tag)
       if has_revised_changes?
         if last_revision_number.nil?
           build_base_revision
@@ -173,6 +171,9 @@ module Mongoidal
         revision
       end
     end
+
+    protected
+
 
     # loops through each revisable embedded model and passes the item,
     # results array and fields array so that they can be processed further
