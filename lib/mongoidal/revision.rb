@@ -43,8 +43,6 @@ module Mongoidal
     end
 
     def restore!
-      user_can!(:restore)
-
       if revisable.last_revision_number != number
         revisable.revisions.where(:number.gt => number).destroy
 
