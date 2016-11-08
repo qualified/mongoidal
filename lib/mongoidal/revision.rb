@@ -5,9 +5,9 @@ module Mongoidal
     included do
       include Mongoid::Document
 
-      embedded_in :revisable, polymorphic: true
+      embedded_in :revisable,     polymorphic: true
 
-      field :created_at, type: Time
+      field :created_at,          type: Time
 
       field :number,              type: Integer
       validates_presence_of :number

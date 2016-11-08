@@ -134,20 +134,29 @@ module Mongoidal
       history
     end
 
-    def revise(message: nil, tag: nil)
-      revision = prepare_revision(message, tag)
-      result = respond_to?(:store) ? store : save
+    def revise(message: nil, tag: nil, created_at: Time.now, method: nil)
+      revision = prepare_revision(message, tag, created_at: created_at)
+
+      result = if method
+        send(method)
+      else
+        respond_to?(:store) ? store : save
+      end
+
       if result
         revision
       else
         false
       end
-
     end
 
-    def revise!(message: nil, tag: nil)
-      revision = prepare_revision(message, tag)
-      respond_to?(:store!) ? store! : save!
+    def revise!(message: nil, tag: nil, created_at: Time.now, method: nil)
+      revision = prepare_revision(message, tag, created_at: created_at)
+      if method
+        send(method)
+      else
+        respond_to?(:store!) ? store! : save!
+      end
       revision
     end
 
@@ -155,7 +164,7 @@ module Mongoidal
       @revision_tree ||= RevisionTree.new(self)
     end
 
-    def prepare_revision(message, tag)
+    def prepare_revision(message, tag, created_at: Time.now)
       if has_revised_changes?
         if last_revision_number.nil?
           build_base_revision
@@ -163,6 +172,7 @@ module Mongoidal
         end
 
         revision = build_next_revision
+        revision.created_at = created_at
         revision.message = message
         revision.tag = tag
 

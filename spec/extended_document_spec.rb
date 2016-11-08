@@ -21,16 +21,16 @@ describe Mongoidal::EmbeddedDocument do
   subject(:child) { parent.embedded_examples.create }
 
   context '1 level deep' do
-    its(:parent_model) { should eq parent }
-    its(:root_model) { should eq parent }
+    its(:_parent) { should eq parent }
+    its(:_root) { should eq parent }
     its(:created_at) { should_not be_nil }
   end
 
   context '2 levels deep' do
     subject(:deep_child) { child.deep_embedded_examples.create }
 
-    its(:parent_model) { should eq child }
-    its(:root_model) { should eq parent }
+    its(:_parent) { should eq child }
+    its(:_root) { should eq parent }
   end
 end
 

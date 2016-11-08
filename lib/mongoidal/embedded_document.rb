@@ -12,31 +12,17 @@ module Mongoidal
       id.generation_time
     end
 
-    # returns the parent model for this class. Useful for when the parent needs to be
-    # accessed in a dynamic way and the actual name of the parent field isn't known.
-    def parent_model
-      name = parent_relationship.try(:name)
-      send(name) if name
-    end
-
-    # the root model that this model is embedded in (no matter how many levels deep)
-    def root_model
-      parent_models.last
-    end
-
     # touches self and all parents
     def touch_all
       touch
-      parent_models.each(&:touch)
+      _parents.each(&:touch)
     end
 
-    def parent_models
-      @parent_models ||= begin
-        parents = Array.new
-        parents << (parent = parent_model)
-        parents << (parent = parent.parent_model) while parent and parent.respond_to?(:parent_model)
-        parents
-      end
+    def _parents
+      parents = []
+      object = self
+      while (object._parent) do parents << object = object._parent; end
+      parents
     end
 
     def parent_relationship
