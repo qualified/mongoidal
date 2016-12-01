@@ -56,8 +56,8 @@ module Mongoidal
     # and insert/update/delete them one by one based off of the existing data,
     # instead of just replacing the entire array like a normal save would do.
     # Any items not present within the new array will be destroyed
-    def nested_save!(attributes, *embeds, &block)
-      to_delete = nested_assign(attributes, *embeds)
+    def nested_save!(attributes, &block)
+      to_delete = nested_assign(attributes)
       if valid?
         block.call(to_delete) if block_given?
         to_delete.each(&:destroy)
