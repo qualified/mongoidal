@@ -204,11 +204,17 @@ module Mongoidal
       models
     end
 
+    def next_revision_number
+      number = last_revision_number + 1
+      number += 1 while revisions.where(number: number).exists?
+      number
+    end
+
     def build_next_revision
       changes = revised_changes
       if has_revised_changes?
         revision = revisions.build
-        revision.number = last_revision_number + 1
+        revision.number = next_revision_number
         revision.created_at = Time.now.utc
 
         changes.each do |k, v|
