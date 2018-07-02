@@ -258,8 +258,18 @@ module Mongoidal
     end
 
     module ClassMethods
+      def ancestor_revisable_fields
+        @ancestor_revisable_fields ||= Set.new.tap do |fields|
+          self.ancestors.each do |ancestor|
+            if ancestor != self and ancestor.respond_to? :revisable_fields
+              fields.merge(ancestor.revisable_fields)
+            end
+          end
+        end
+      end
+
       def revisable_fields
-        @revisable_fields ||= Set.new
+        @revisable_fields ||= Set.new(ancestor_revisable_fields)
       end
 
       def revisable_embeds

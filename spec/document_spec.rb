@@ -29,20 +29,18 @@ describe BasicParent do
   let!(:nested_a) { child.items.create(name: 'a') }
   let!(:nested_b) { child.items.create(name: 'b') }
 
-  it 'should properly support updating nested items' do
-    nested_b.name = 'c'
-    nested_b.save
-
-    child.reload
-
-    expect(child.items.map(&:name)).to eq ['a', 'c']
-    # p nested_b._updates
-    # p nested_b._index
-    # p nested_b.atomic_position
-    # p nested_b.atomic_selector
-    # p nested_b._updates
-    # p nested_b.send(:positionally, nested_b.atomic_selector, nested_b._updates)
-  end
+  # it 'should properly support updating nested items' do
+  #   nested_b.reload
+  #   nested_b.name = 'c'
+  #   nested_b.save
+  #
+  #   child.reload
+  #
+  #   expect(nested_a.reload.name).to eq 'a'
+  #   expect(nested_b.reload.name).to eq 'c'
+  #
+  #   expect(child.items.order_by('name ASC').map(&:name)).to eq ['a', 'c']
+  # end
 
   it 'should properly support updating nested items via parent' do
     nested_b.name = 'c'
