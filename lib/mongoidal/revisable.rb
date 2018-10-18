@@ -3,7 +3,6 @@ module Mongoidal
     extend ActiveSupport::Concern
 
     included do
-
       embeds_many :revisions, as: :revisable, class_name: 'Revision' do
         def find_by_number(number)
           where(number: number).first
@@ -134,29 +133,26 @@ module Mongoidal
       history
     end
 
-    def revise(message: nil, tag: nil, created_at: Time.now, method: nil)
-      revision = prepare_revision(message, tag, created_at: created_at)
-
-      result = if method
-        send(method)
-      else
-        respond_to?(:store) ? store : save
-      end
-
-      if result
-        revision
-      else
-        false
-      end
+    def revise(message: nil, tag: nil, created_at: Time.now, method: nil, type: :change)
+      method ||= respond_to?(:store) ? :store : :save
+      !!_revise(message, tag, created_at, method, type)
     end
 
-    def revise!(message: nil, tag: nil, created_at: Time.now, method: nil)
-      revision = prepare_revision(message, tag, created_at: created_at)
-      if method
-        send(method)
+    def revise!(message: nil, tag: nil, created_at: Time.now, method: nil, type: :change)
+      method ||= respond_to?(:store!) ? :store! : :save!
+      _revise(message, tag, created_at, method, type)
+    end
+
+    def _revise(message, tag, created_at, method, type)
+      case type
+      when :change, :snapshot, :event
       else
-        respond_to?(:store!) ? store! : save!
+        raise ArgumentError.new("type #{type} is invalid")
       end
+
+      revision = prepare_revision(message, tag, type: type, created_at: created_at)
+      revision.set_compressed if revision
+      send(method)
       revision
     end
 
@@ -164,14 +160,15 @@ module Mongoidal
       @revision_tree ||= RevisionTree.new(self)
     end
 
-    def prepare_revision(message, tag, created_at: Time.now)
-      if has_revised_changes?
+    def prepare_revision(message, tag, type: :change, created_at: Time.now)
+      if has_revised_changes? or type != :change
         if last_revision_number.nil?
           build_base_revision
           self.last_revision_number = 0
         end
 
         revision = build_next_revision
+        revision.type = type
         revision.created_at = created_at
         revision.message = message
         revision.tag = tag
