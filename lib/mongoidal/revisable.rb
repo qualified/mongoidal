@@ -151,7 +151,6 @@ module Mongoidal
       end
 
       revision = prepare_revision(message, tag, type: type, created_at: created_at, event_data: event_data)
-      revision.set_compressed if revision
       send(method)
       revision
     end
@@ -220,7 +219,7 @@ module Mongoidal
         end
 
         revision.revised_embeds = revised_embed_changes
-
+        revision.set_compressed
         revision
       end
     end
