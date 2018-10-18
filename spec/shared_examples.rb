@@ -1,4 +1,3 @@
-
 class RevisableExample
   include Mongoidal::RootDocument
   include Mongoidal::Revisable

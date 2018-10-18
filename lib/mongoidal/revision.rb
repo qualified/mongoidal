@@ -1,3 +1,5 @@
+require "zlib"
+
 module Mongoidal
   module Revision
     extend ActiveSupport::Concern
@@ -14,12 +16,40 @@ module Mongoidal
       validates_uniqueness_of :number
 
       field :tag,                 type: String
+      field :type,                type: Symbol, default: :change
 
       field :message,             type: String
 
-      field :revised_attributes,  type: Hash, default: ->{{}}
+      # compressed version of revised attributes
+      field :revised_attributes_c,type: BSON::Binary
       field :revised_embeds,      type: Hash, default: ->{{}}
+      field :event_data,          type: Hash, default: ->{{}}
 
+      field :revised_keys,        type: Array
+
+      before_save :set_compressed
+
+      def set_compressed
+        self.revised_keys = revised_attributes.keys
+        compressed = Zlib::Deflate.deflate(JSON.dump(revised_attributes))
+        self.revised_attributes_c = BSON::Binary.new(compressed)
+        self[:revised_attributes] = nil if self[:revised_attributes]
+      end
+
+      def revised_attributes
+        @revised_attributes ||= begin
+          attr = self[:revised_attributes_c]
+          if attr.present?
+            JSON.parse(Zlib::Inflate.inflate(attr.data))
+          else
+            self[:revised_attributes] || {}
+          end
+        end
+      end
+
+      def revised_attributes=(val)
+        @revised_attributes = val || {}
+      end
     end
 
     def base_revision?
