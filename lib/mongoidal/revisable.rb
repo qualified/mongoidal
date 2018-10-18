@@ -133,24 +133,24 @@ module Mongoidal
       history
     end
 
-    def revise(message: nil, tag: nil, created_at: Time.now, method: nil, type: :change)
+    def revise(message: nil, tag: nil, created_at: Time.now, method: nil, type: :change, event_data: nil)
       method ||= respond_to?(:store) ? :store : :save
-      !!_revise(message, tag, created_at, method, type)
+      !!_revise(message, tag, created_at, method, type, event_data)
     end
 
-    def revise!(message: nil, tag: nil, created_at: Time.now, method: nil, type: :change)
+    def revise!(message: nil, tag: nil, created_at: Time.now, method: nil, type: :change, event_data: nil)
       method ||= respond_to?(:store!) ? :store! : :save!
-      _revise(message, tag, created_at, method, type)
+      _revise(message, tag, created_at, method, type, event_data)
     end
 
-    def _revise(message, tag, created_at, method, type)
+    def _revise(message, tag, created_at, method, type, event_data)
       case type
-      when :change, :snapshot, :event
+      when :change, :event
       else
         raise ArgumentError.new("type #{type} is invalid")
       end
 
-      revision = prepare_revision(message, tag, type: type, created_at: created_at)
+      revision = prepare_revision(message, tag, type: type, created_at: created_at, event_data: event_data)
       revision.set_compressed if revision
       send(method)
       revision
@@ -160,17 +160,18 @@ module Mongoidal
       @revision_tree ||= RevisionTree.new(self)
     end
 
-    def prepare_revision(message, tag, type: :change, created_at: Time.now)
-      if has_revised_changes? or type != :change
+    def prepare_revision(message, tag, type: :change, created_at: Time.now, event_data: nil)
+      if has_revised_changes? || type != :change
         if last_revision_number.nil?
           build_base_revision
           self.last_revision_number = 0
         end
 
-        revision = build_next_revision
+        revision = build_next_revision(type != :change)
         revision.type = type
         revision.created_at = created_at
         revision.message = message
+        revision.event_data = event_data
         revision.tag = tag
 
         self.last_revision_number = revision.number
@@ -207,9 +208,9 @@ module Mongoidal
       number
     end
 
-    def build_next_revision
+    def build_next_revision(force = false)
       changes = revised_changes
-      if has_revised_changes?
+      if has_revised_changes? || force
         revision = revisions.build
         revision.number = next_revision_number
         revision.created_at = Time.now.utc

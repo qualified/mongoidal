@@ -30,6 +30,16 @@ describe Mongoidal::Revisable do
     end
   end
 
+  describe 'event type' do
+    subject { existing }
+    context 'when there are changes' do
+      it 'should save' do
+        existing.revise!(type: :event, tag: 'clicked', event_data: {path: 'test'})
+        expect(existing.reload.revisions[1].event_data['path']).to eq 'test'
+      end
+    end
+  end
+
   describe '#revised_embed_changes' do
     subject { existing }
     context 'when there are changes' do

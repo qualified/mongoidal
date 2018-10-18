@@ -23,6 +23,7 @@ module Mongoidal
       # compressed version of revised attributes
       field :revised_attributes_c,type: BSON::Binary
       field :revised_embeds,      type: Hash, default: ->{{}}
+      field :event_data,          type: Hash, default: ->{{}}
 
       field :revised_keys,        type: Array
 
