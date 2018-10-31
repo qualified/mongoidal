@@ -35,7 +35,8 @@ describe Mongoidal::Revisable do
     context 'when there are changes' do
       it 'should save' do
         existing.revise!(type: :event, tag: 'clicked', event_data: {path: 'test'})
-        expect(existing.reload.revisions[1].event_data['path']).to eq 'test'
+        expect(existing.reload.revisions[0].revised_attributes['name']).to eq 'test'
+        expect(existing.revisions[1].event_data['path']).to eq 'test'
       end
     end
   end
