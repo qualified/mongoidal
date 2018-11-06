@@ -162,8 +162,12 @@ module Mongoidal
     def prepare_revision(message, tag, type: :change, created_at: Time.now, event_data: nil)
       if has_revised_changes? || type != :change
         if last_revision_number.nil?
-          build_base_revision.save!
-          self.last_revision_number = 0
+          if revisions.any?
+            self.last_revision_number = revisions.last.number
+          else
+            build_base_revision.save!
+            self.last_revision_number = 0
+          end
         end
 
         revision = build_next_revision(type != :change)
