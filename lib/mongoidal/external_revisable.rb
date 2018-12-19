@@ -1,10 +1,12 @@
 module Mongoidal
-  module Revisable
+  # Same as Revisable, except that the revisions are stored external to the document, within
+  # their own root collection
+  module ExternalRevisable
     extend ActiveSupport::Concern
     include RevisableBase
 
     included do
-      embeds_many :revisions, as: :revisable, class_name: 'Revision' do
+      has_many :revisions, as: :revisable, class_name: 'ExternalRevision' do
         def find_by_number(number)
           where(number: number).first
         end

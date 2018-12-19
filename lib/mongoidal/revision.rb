@@ -7,7 +7,9 @@ module Mongoidal
     included do
       include Mongoid::Document
 
-      embedded_in :revisable,     polymorphic: true
+      unless relations['revisable']
+        embedded_in :revisable,   polymorphic: true
+      end
 
       field :created_at,          type: Time
 
