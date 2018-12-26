@@ -6,7 +6,7 @@ module Mongoidal
     include RevisableBase
 
     included do
-      has_many :revisions, as: :revisable, class_name: 'ExternalRevision' do
+      has_many :revisions, as: :revisable, dependent: :destroy, class_name: 'ExternalRevision' do
         def find_by_number(number)
           where(number: number).first
         end

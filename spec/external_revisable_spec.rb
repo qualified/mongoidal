@@ -30,6 +30,21 @@ describe Mongoidal::Revisable do
     end
   end
 
+  describe 'auto saving' do
+    subject { existing }
+    context 'when there are changes' do
+      before { existing.name = 'a' }
+      its(:revised_changes) { should eq ({"name" => ["test", "a"]}) }
+
+      it 'should save' do
+        rev = existing.prepare_revision('test', nil)
+        expect(rev).to be_changed
+        existing.save
+        expect(rev).to_not be_changed
+      end
+    end
+  end
+
   describe 'event type' do
     subject { existing }
     context 'when there are changes' do

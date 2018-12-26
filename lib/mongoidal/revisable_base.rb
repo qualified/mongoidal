@@ -163,7 +163,7 @@ module Mongoidal
 
         self.last_revision_number = revision.number
         @revision_tree = nil
-        revision
+        @revision = revision
       end
     end
 
