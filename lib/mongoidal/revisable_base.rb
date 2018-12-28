@@ -155,13 +155,17 @@ module Mongoidal
         end
 
         revision = build_next_revision(type != :change)
-        revision.type = type
-        revision.created_at = created_at
-        revision.message = message
-        revision.event_data = event_data
-        revision.tag = tag
 
-        self.last_revision_number = revision.number
+        if revision
+          revision.type = type
+          revision.created_at = created_at
+          revision.message = message
+          revision.event_data = event_data
+          revision.tag = tag
+
+          self.last_revision_number = revision.number
+        end
+        
         @revision_tree = nil
         @revision = revision
       end
