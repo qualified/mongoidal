@@ -139,21 +139,20 @@ module Mongoidal
       revision
     end
 
-    def revision_tree
-      @revision_tree ||= RevisionTree.new(self)
+    def ensure_base_revision!
+      if last_revision_number.nil?
+        if revisions.any?
+          self.set(last_revision_number: revisions.last.number)
+        else
+          build_base_revision.save!
+          self.set(last_revision_number: 0)
+        end
+      end
     end
 
     def prepare_revision(message, tag, type: :change, created_at: Time.now, event_data: nil)
       if has_revised_changes? || type != :change
-        if last_revision_number.nil?
-          if revisions.any?
-            self.last_revision_number = revisions.last.number
-          else
-            build_base_revision.save!
-            self.last_revision_number = 0
-          end
-        end
-
+        ensure_base_revision!
         revision = build_next_revision(type != :change)
 
         if revision
@@ -165,8 +164,7 @@ module Mongoidal
 
           self.last_revision_number = revision.number
         end
-        
-        @revision_tree = nil
+
         @revision = revision
       end
     end
@@ -282,12 +280,6 @@ module Mongoidal
       def embedded_revisable(relation, *field_names)
         revisable_embeds[relation] ||= Set.new
         revisable_embeds[relation] += field_names.map(&:to_s)
-      end
-    end
-
-    class RevisionTree
-      def initialize(revisable)
-        @revisable = revisable
       end
     end
   end
