@@ -61,6 +61,16 @@ describe Mongoidal::EnumField do
     end
   end
 
+  describe 'changes method' do
+    it 'should show removed and added' do
+      example.grades = [:a, :b, :c]
+      example.save
+      example.grades = [:c, :d, :e]
+      expect(example.grades_changes[:added]).to eq [:d, :e]
+      expect(example.grades_changes[:removed]).to eq [:a, :b]
+    end
+  end
+
   describe 'is_? methods' do
     its(:admin?) { should be true }
     its(:standard?) { should be false }
