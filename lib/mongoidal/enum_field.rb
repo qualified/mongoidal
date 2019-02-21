@@ -45,6 +45,18 @@ module Mongoidal
                 end
               end
             end
+
+            # provide a changes method which show what was added and removed
+            define_method "#{field_name}_deltas" do
+              changes = self.__send__("#{field_name}_change").dup
+              changes[0] ||= []
+              changes[1] ||= []
+              {
+                added: changes[1] - changes[0],
+                removed: changes[0] - changes[1]
+              }
+            end
+            
           else
             validates_inclusion_of field_name,
                                    in: inclusion_values,
@@ -81,17 +93,6 @@ module Mongoidal
                 doc.__send__("#{field_name}=", nil)
               end
             end
-          end
-
-          # provide a changes method which show what was added and removed
-          define_method "#{field_name}_changes" do
-            changes = self.__send__("#{field_name}_change").dup
-            changes[0] ||= []
-            changes[1] ||= []
-            {
-              added: changes[1] - changes[0],
-              removed: changes[0] - changes[1]
-            }
           end
 
           # allows easy access to translations

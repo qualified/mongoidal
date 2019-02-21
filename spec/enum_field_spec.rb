@@ -61,13 +61,13 @@ describe Mongoidal::EnumField do
     end
   end
 
-  describe 'changes method' do
+  describe 'deltas method' do
     it 'should show removed and added' do
       example.grades = [:a, :b, :c]
       example.save
       example.grades = [:c, :d, :e]
-      expect(example.grades_changes[:added]).to eq [:d, :e]
-      expect(example.grades_changes[:removed]).to eq [:a, :b]
+      expect(example.grades_deltas[:added]).to eq [:d, :e]
+      expect(example.grades_deltas[:removed]).to eq [:a, :b]
     end
   end
 
