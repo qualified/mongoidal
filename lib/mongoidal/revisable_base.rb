@@ -142,7 +142,7 @@ module Mongoidal
     def ensure_base_revision!
       if last_revision_number.nil?
         if revisions.any?
-          self.set(last_revision_number: revisions.last.number)
+          self.set(last_revision_number: max_revision_number)
         else
           build_base_revision.save!
           self.set(last_revision_number: 0)
@@ -191,17 +191,15 @@ module Mongoidal
       models
     end
 
-    def next_revision_number
-      number = last_revision_number + 1
-      number += 1 while revisions.where(number: number).exists?
-      number
+    def max_revision_number
+      revisions.pluck(:number).map(&:to_i).max
     end
 
     def build_next_revision(force = false)
       changes = revised_changes
       if has_revised_changes? || force
         revision = revisions.build
-        revision.number = next_revision_number
+        revision.number = max_revision_number + 1
         revision.created_at = Time.now.utc
 
         changes.each do |k, v|
