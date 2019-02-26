@@ -15,7 +15,6 @@ module Mongoidal
 
       field :number,              type: Integer
       validates_presence_of :number
-      validates_uniqueness_of :number
 
       field :tag,                 type: String
       field :type,                type: Symbol, default: :change
