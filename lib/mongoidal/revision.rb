@@ -7,7 +7,7 @@ module Mongoidal
     included do
       include Mongoid::Document
 
-      unless relations['revisable'] || respond_to?(:revisable_id)
+      unless relations['revisable'] || method_defined?(:revisable_id)
         embedded_in :revisable,   polymorphic: true
       end
 
