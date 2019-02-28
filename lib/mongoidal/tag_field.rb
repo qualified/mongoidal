@@ -54,6 +54,13 @@ module Mongoidal
             end
           end
 
+          define_method "remove_#{field_name}" do |tags|
+            if tags
+              existing = self[field_name] || []
+              existing -= Array.wrap(tags)
+            end
+          end
+
           ## define cleanse helper
           define_method "cleanse_for_#{field_name}" do |tags|
             cleanse_tags.call tags
