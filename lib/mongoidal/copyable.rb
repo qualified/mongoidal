@@ -14,11 +14,15 @@ module Mongoidal
     end
 
     def copy_to(target)
-      target.attributes = reset_ids(attributes.dup)
+      target.attributes = reset_ids(copyable_attributes)
     end
 
     def copy
-      self.class.new(reset_ids(attributes.dup))
+      self.class.new(reset_ids(copyable_attributes))
+    end
+
+    def copyable_attributes
+      attributes.slice(*(self.class.fields.keys + self.class.relations.keys))
     end
 
     # copies the fields from the instance to the target. Will reset any _id attributes that it
