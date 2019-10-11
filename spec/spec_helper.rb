@@ -1,10 +1,15 @@
 require 'rspec/its'
 require 'mongoid-rspec'
-require './lib/mongoidal'
+require 'mongoidal'
 require 'shared_examples'
 
 Mongoid.configure do |config|
-  config.connect_to(ENV['CI'] ? "mongoidal_#{Process.pid}" : 'mongoidal_test')
+  host = ENV['MONGO_HOST'] || 'localhost'
+  port = ENV['MONGO_PORT'] || '27017'
+  config.clients.default = {
+    hosts: ["#{host}:#{port}"],
+    database: ENV['MONGO_DB'] || 'mongoidal_test',
+  }
 end
 
 
@@ -32,10 +37,6 @@ RSpec.configure do |config|
     Mongoid.purge!
     Mongoid::IdentityMap.clear if defined?(Mongoid::IdentityMap)
     User.current = nil
-  end
-
-  config.after(:suite) do
-    Mongoid::Threaded.sessions[:default].drop if ENV['CI']
   end
 
   # rspec-expectations config goes here. You can use an alternate

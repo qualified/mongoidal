@@ -18,12 +18,19 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "mongoid-slug"
-  spec.add_development_dependency "mongoid", '~> 5.4.0'
   spec.add_development_dependency "bundler", "~> 1.6"
-  spec.add_development_dependency "sidekiq"
+  if RUBY_VERSION < '2.5'
+    spec.add_development_dependency "mongoid", "~> 5.4"
+  else
+    spec.add_development_dependency "mongoid", "~> 6.4"
+  end
+  # REVIEW globalid is dependency
   spec.add_development_dependency "globalid"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-its"
   spec.add_development_dependency "mongoid-rspec"
+  if ENV["CI"]
+    spec.add_development_dependency "rspec_junit_formatter"
+  end
 end
