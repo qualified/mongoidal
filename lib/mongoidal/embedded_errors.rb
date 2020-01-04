@@ -1,7 +1,7 @@
 module Mongoidal
   module EmbeddedErrors
     def embedded_errors
-      errors = self.errors.dup
+      errors = self.errors.to_h
       self.errors.each do |key, value|
         relation = self.class.embedded_relations[key.to_s]
         if relation
