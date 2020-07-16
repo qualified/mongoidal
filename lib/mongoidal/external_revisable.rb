@@ -21,6 +21,13 @@ module Mongoidal
       end
 
       accepts_nested_attributes_for :revisions
+
+    end
+
+    protected
+
+    def revision_prepared_for_revise(revision)
+      revision.save!
     end
   end
 end

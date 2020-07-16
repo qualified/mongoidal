@@ -136,6 +136,7 @@ module Mongoidal
 
       revision = prepare_revision(message, tag, type: type, created_at: created_at, event_data: event_data)
       send(method)
+      revision_prepared_for_revise(revision)
       revision
     end
 
@@ -171,6 +172,9 @@ module Mongoidal
 
     protected
 
+    def revision_prepared_for_revise(revision)
+      # placeholder to handle additional post prepared logic
+    end
 
     # loops through each revisable embedded model and passes the item,
     # results array and fields array so that they can be processed further
