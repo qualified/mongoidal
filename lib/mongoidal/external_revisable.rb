@@ -27,7 +27,7 @@ module Mongoidal
     protected
 
     def revision_prepared_for_revise(revision)
-      revision.save!
+      revision&.save!
     end
   end
 end
