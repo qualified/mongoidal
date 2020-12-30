@@ -196,7 +196,7 @@ module Mongoidal
     end
 
     def max_revision_number
-      revisions.max(:number)
+      revisions.max(:number).to_i
     end
 
     def build_next_revision(force = false)
