@@ -165,7 +165,6 @@ module Mongoidal
 
           self.last_revision_number = revision.number
         end
-
         @revision = revision
       end
     end
@@ -196,14 +195,14 @@ module Mongoidal
     end
 
     def max_revision_number
-      revisions.max(:number).to_i
+      revisions.where(:number.ne => nil).max(:number)
     end
 
     def build_next_revision(force = false)
       changes = revised_changes
-      if has_revised_changes? || force
+      if changes.any? || force
         revision = revisions.build
-        revision.number = max_revision_number + 1
+        revision.number = max_revision_number.to_i + 1
         revision.created_at = Time.now.utc
 
         changes.each do |k, v|

@@ -60,6 +60,6 @@ end
 
 class ExternalRevision
   include Mongoidal::RootDocument
-  belongs_to :revisable,     polymorphic: true
+  belongs_to :revisable, polymorphic: true, optional: true
   include Mongoidal::Revision
 end

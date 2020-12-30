@@ -35,6 +35,7 @@ describe Mongoidal::Revisable do
     context 'when there are changes' do
       before { existing.name = 'a' }
       its(:revised_changes) { should eq ({"name" => ["test", "a"]}) }
+      its(:has_revised_changes?) { should eq true }
 
       it 'should save' do
         rev = existing.prepare_revision('test', nil)
