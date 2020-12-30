@@ -4,7 +4,7 @@ module Mongoidal
     include RevisableBase
 
     included do
-      embeds_many :revisions, as: :revisable, class_name: 'Revision' do
+      embeds_many :revisions, as: :revisable, validate: false, class_name: 'Revision' do
         def find_by_number(number)
           where(number: number).first
         end

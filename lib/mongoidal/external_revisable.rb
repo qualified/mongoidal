@@ -4,9 +4,8 @@ module Mongoidal
   module ExternalRevisable
     extend ActiveSupport::Concern
     include RevisableBase
-
     included do
-      has_many :revisions, as: :revisable, dependent: :destroy, class_name: 'ExternalRevision' do
+      has_many :revisions, as: :revisable, dependent: :destroy, validate: false, class_name: 'ExternalRevision' do
         def find_by_number(number)
           where(number: number).first
         end
@@ -21,7 +20,6 @@ module Mongoidal
       end
 
       accepts_nested_attributes_for :revisions
-
     end
 
     protected
