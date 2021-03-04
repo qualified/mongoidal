@@ -73,15 +73,25 @@ module Mongoidal
       end
     end
 
+    def last_revision?
+      revisable.last_revision_number == number
+    end
+
     def restore!
-      if revisable.last_revision_number != number
-        revisable.revisions.where(:number.gt => number).destroy
+      unless last_revision?
+        restore
+        revisable.revise!(tag: 'restored')
+      end
+    end
 
-        revised_attributes.each do |key, value|
-          revisable.__send__("#{key}=", value)
+    # reconstructs the fields on the revisable to this current point
+    def restore
+      unless last_revision?
+        revisable.revisions.where(:number.lte => number).each do |revision|
+          revision.revised_attributes.each do |key, value|
+            revisable.__send__("#{key}=", value)
+          end
         end
-
-        revisable.respond_to?(:store!) ? revisable.store! : revisable.save!
       end
     end
 
