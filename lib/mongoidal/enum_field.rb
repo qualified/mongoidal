@@ -12,7 +12,7 @@ module Mongoidal
 
       def enum_field(field_name, options = {})
         raise "values option is required" unless options.has_key? :values
-
+        
         options[:type] ||= Symbol
 
         field_options = options.slice(:type, :default, :index)
@@ -80,7 +80,7 @@ module Mongoidal
               unless key.blank?
                 define_method "#{prefix}#{key}#{suffix}?" do
                   val = self.__send__ field_name
-                  options[:type] == Array ? (val & [key.to_sym, key.to_s]).any? : (val == key.to_sym || val == key.to_s)
+                  options[:type] == Array ? (val.to_a & [key.to_sym, key.to_s]).any? : (val == key.to_sym || val == key.to_s)
                 end
               end
             end
