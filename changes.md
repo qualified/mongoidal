@@ -1,3 +1,5 @@
+# 0.2.2
+- Additional StringifiedSymbol support for enum and tag fields
 # 0.2.1
 - Now use StringifiedSymbol when possible
 - Ensure revisions are sorted properly when restoring
