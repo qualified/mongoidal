@@ -9,20 +9,22 @@ module Mongoidal
         ## set default options
         options[:separator] = ',' unless options[:separator]
 
+        symbol_class = defined?(StringifiedSymbol) ? StringifiedSymbol : Symbol
+
         cleanse_tags = lambda do |tags|
           unless tags.nil?
             tags = tags.downcase if tags.is_a?(String) and options[:downcase]
-            tags = [tags.to_s] if tags.is_a? Symbol
+            tags = [tags.to_s] if tags.is_a? symbol_class
             tags = tags.split(options[:separator]) if tags.is_a? String
             tags = tags.compact.map {|tag| tag.to_s.strip}.reject(&:blank?).uniq
-            tags = tags.map {|tag| tag.to_sym} if options[:type] == Symbol
+            tags = tags.map {|tag| tag.to_sym} if options[:type] == symbol_class
           end
           tags
         end
 
         ## create field
         field_options = options.slice(:default, :localize, :as)
-        field_options[:type] = options[:type] == Symbol ? Mongoidal::SymArray : Array
+        field_options[:type] = options[:type] == symbol_class ? Mongoidal::SymArray : Array
 
         field(field_name, field_options).tap do
           ## create index if option is set
