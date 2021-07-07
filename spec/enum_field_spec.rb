@@ -5,12 +5,12 @@ class EnumExample
   include Mongoidal::Helpers
   include Mongoidal::EnumField
 
-  enum_field :role, type: Symbol, default: :standard, allow_nil: true, suffix: false, prefix: '', values: [
+  enum_field :role, type: StringifiedSymbol, default: :standard, allow_nil: true, suffix: false, prefix: '', values: [
       :admin,
       :standard
   ]
 
-  enum_field :bin, type: Symbol, values: [:hungry, :bored]
+  enum_field :bin, type: StringifiedSymbol, values: [:hungry, :bored]
 
   enum_field :grades, type: Array, values: [:a, :b, :c, :d, :e, :f]
 

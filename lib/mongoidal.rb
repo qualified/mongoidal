@@ -22,7 +22,6 @@ require 'mongoidal/revision'
 require 'mongoidal/bulk_savable'
 require 'mongoidal/nesting'
 require 'mongoidal/embedded_errors'
-require 'mongoidal/permittable'
 # for now we are going to require manually
 # require 'mongoidal/identification'
 

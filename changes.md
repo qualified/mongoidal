@@ -1,3 +1,8 @@
+# 0.2.1
+- Now use StringifiedSymbol when possible
+- Ensure revisions are sorted properly when restoring
+- Removed Permittable module, not used and had upgrade issues
+
 # 0.2.0
 - Revision#restore! now does a full restore of changes to that point, and saves as a new revision, instead of removing old history 
 

@@ -17,13 +17,6 @@ module Mongoidal
     # easy way to log the return value of code
     def log_info(result = nil)
       result ||= yield
-      logger.debug "#{caller_locations(1,1)[0].label}: #{result.inspect}"
-      result
-    end
-
-    # easy way to log the return value of code
-    def log_info(result = nil)
-      result ||= yield
       logger.info "#{caller_locations(1,1)[0].label}: #{result.inspect}"
       result
     end

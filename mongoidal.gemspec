@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "mongoid-slug"
-  spec.add_development_dependency "mongoid", '~> 5.4.0'
+  spec.add_development_dependency "mongoid", '~> 7.0.0'
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "sidekiq"
   spec.add_development_dependency "globalid"
