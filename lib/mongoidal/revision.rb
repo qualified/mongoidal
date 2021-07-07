@@ -17,7 +17,7 @@ module Mongoidal
       validates_presence_of :number
 
       field :tag,                 type: String
-      field :type,                type: Symbol, default: :change
+      field :type,                type: (defined?(StringifiedSymbol) ? StringifiedSymbol : Symbol), default: :change
 
       field :message,             type: String
 
@@ -87,7 +87,7 @@ module Mongoidal
     # reconstructs the fields on the revisable to this current point
     def restore
       unless last_revision?
-        revisable.revisions.where(:number.lte => number).each do |revision|
+        revisable.revisions.where(:number.lte => number).order_by('number ASC').each do |revision|
           revision.revised_attributes.each do |key, value|
             revisable.__send__("#{key}=", value)
           end
