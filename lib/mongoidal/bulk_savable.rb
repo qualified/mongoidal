@@ -8,7 +8,7 @@ module Mongoidal
     # If a specific set of embed relations are not provided then all embeds_many relations will be used
     def bulk_assign(attributes, *embeds)
       if embeds.blank?
-        embeds = self.class.relations.select {|k, v| v.macro == :embeds_many }.keys
+        embeds = self.class.relations.select {|k, v| v.is_a?(Mongoid::Association::Referenced::EmbesMany) }.keys
       end
 
       root_attrs = attributes.except(*embeds)
