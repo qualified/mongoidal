@@ -17,7 +17,7 @@ module Mongoidal
       validates_presence_of :number
 
       field :tag,                 type: String
-      field :type,                type: (defined?(StringifiedSymbol) ? StringifiedSymbol : Symbol), default: :change
+      field :type,                type: (defined?(Mongoid::StringifiedSymbol) ? Mongoid::StringifiedSymbol : Symbol), default: :change
 
       field :message,             type: String
 

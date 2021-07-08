@@ -1,3 +1,5 @@
+# 0.2.3
+- StringifiedSymbol -> Mongoid::StringifiedSymbol
 # 0.2.2
 - Additional StringifiedSymbol support for enum and tag fields
 # 0.2.1

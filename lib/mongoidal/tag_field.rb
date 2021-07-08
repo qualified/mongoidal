@@ -9,7 +9,7 @@ module Mongoidal
         ## set default options
         options[:separator] = ',' unless options[:separator]
 
-        symbol_class = defined?(StringifiedSymbol) ? StringifiedSymbol : Symbol
+        symbol_class = defined?(Mongoid::StringifiedSymbol) ? Mongoid::StringifiedSymbol : Symbol
 
         cleanse_tags = lambda do |tags|
           unless tags.nil?
