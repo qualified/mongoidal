@@ -5,7 +5,7 @@ class TagExample
   include Mongoidal::TagField
   tag_field :tags
   tag_field :skills, downcase: true
-  tag_field :syms, type: StringifiedSymbol
+  tag_field :syms, type: Mongoid::StringifiedSymbol
 end
 
 describe Mongoidal::TagField do

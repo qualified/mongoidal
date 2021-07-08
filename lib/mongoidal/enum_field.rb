@@ -13,7 +13,7 @@ module Mongoidal
       def enum_field(field_name, options = {})
         raise "values option is required" unless options.has_key? :values
         
-        options[:type] ||= defined?(StringifiedSymbol) ? StringifiedSymbol : Symbol
+        options[:type] ||= defined?(Mongoid::StringifiedSymbol) ? Mongoid::StringifiedSymbol : Symbol
 
         field_options = options.slice(:type, :default, :index)
 
