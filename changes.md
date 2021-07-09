@@ -1,3 +1,5 @@
+# 0.2.4
+- Removed macro method references
 # 0.2.3
 - StringifiedSymbol -> Mongoid::StringifiedSymbol
 # 0.2.2
