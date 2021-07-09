@@ -34,7 +34,7 @@ module Mongoidal
       # @return [Mongoid::Relations::Metadata]
       def parent_relationship
         @parent_relationship ||= relations.values.find do |relation|
-          relation.is_a?(Mongoid::Association::Referenced::EmbeddedIn)
+          relation.is_a?(Mongoid::Association::Embedded::EmbeddedIn)
         end
       end
     end
