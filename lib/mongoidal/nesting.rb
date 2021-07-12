@@ -8,7 +8,7 @@ module Mongoidal
     # If a specific set of embed relations are not provided then all embeds_many relations will be used
     def nested_assign(attributes, position: nil)
       attributes = HashWithIndifferentAccess.new(attributes)
-      embeds = self.class.relations.select {|k, v| v.is_a?(Mongoid::Association::Referenced::EmbedsMany)}
+      embeds = self.class.relations.select {|k, v| v.is_a?(Mongoid::Association::Embedded::EmbedsMany)}
 
       root_attrs = attributes.except(*embeds.keys)
       embed_attrs = attributes.slice(*embeds.keys)
