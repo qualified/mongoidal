@@ -1,5 +1,5 @@
 # 0.2.5
-- Fixing small issues
+- Upgraded nested_assign to work with Mongoid 7.x
 # 0.2.4
 - Removed macro method references
 # 0.2.3
