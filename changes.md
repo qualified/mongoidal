@@ -1,3 +1,5 @@
+# 0.2.5
+- Fixing small issues
 # 0.2.4
 - Removed macro method references
 # 0.2.3
