@@ -1,3 +1,5 @@
+# 0.2.6
+- Upgraded Mongoid to 7.4.x
 # 0.2.5
 - Upgraded nested_assign to work with Mongoid 7.x
 # 0.2.4
