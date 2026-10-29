@@ -76,7 +76,7 @@ describe Mongoidal::Nesting do
     end
 
     it 'should match using find_within_collection' do
-      parent.nested_save!(kids:[{name: 'Kid 1', age: 4}])
+      parent.nested_save!({kids: [{name: "Kid 1", age: 4}]})
       expect(kid1.age).to eq 4
     end
 
@@ -107,7 +107,7 @@ describe Mongoidal::Nesting do
     # this is standard functionality
     it 'should update existing favorite' do
       expect(parent.favorite.name).to eq 'Kid 1'
-      parent.nested_assign(favorite: {name: 'Kid 2'})
+      parent.nested_assign({favorite: {name: 'Kid 2'}})
       expect(parent.favorite.id).to eq favorite.id
     end
   end

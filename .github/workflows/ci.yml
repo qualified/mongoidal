@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['3.0', '3.2']
+        mongoid: ['7_4', '8_0', '8_1']
+    env:
+      BUNDLE_GEMFILE: gemfiles/mongoid_${{ matrix.mongoid }}.gemfile
+      CI: 'true'
+    services:
+      mongo:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec rspec

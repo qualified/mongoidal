@@ -35,7 +35,7 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    Mongoid::Threaded.sessions[:default].drop if ENV['CI']
+    Mongoid.default_client.database.drop if ENV["CI"]
   end
 
   # rspec-expectations config goes here. You can use an alternate
