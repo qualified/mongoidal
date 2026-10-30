@@ -33,7 +33,6 @@ describe Mongoidal::Identification do
   end
 
   it 'rebuilds a destroyed embedded document from its attributes' do
-    gid = kid.to_global_id.to_s
     kid.destroy
     gid = kid.to_global_id.to_s
     found = Mongoidal::Locator.new(GlobalID.parse(gid)).locate
