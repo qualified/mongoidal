@@ -18,10 +18,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "mongoid-slug"
-  spec.add_development_dependency "mongoid", '~> 7.4.0'
-  spec.add_development_dependency "bundler", "~> 1.6"
+  spec.add_development_dependency "mongoid", ">= 7.4", "< 8.2"
   spec.add_development_dependency "sidekiq"
   spec.add_development_dependency "globalid"
+  # json 3 rejects the quirks_mode option that ActiveSupport 7.x passes to JSON.generate
+  spec.add_development_dependency "json", "< 3"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-its"
