@@ -21,6 +21,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "mongoid", ">= 7.4", "< 8.2"
   spec.add_development_dependency "sidekiq"
   spec.add_development_dependency "globalid"
+  # json 3 rejects the quirks_mode option that ActiveSupport 7.x passes to JSON.generate
+  spec.add_development_dependency "json", "< 3"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-its"
