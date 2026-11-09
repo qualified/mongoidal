@@ -1,4 +1,4 @@
-# Unreleased
+# 0.3.1
 - Fixed EmbeddedErrors#embedded_errors raising NoMethodError on Rails 7.0 (ActiveModel::Errors#to_h was removed); it no longer triggers the 6.1 deprecations
 - Qualified needs a Gemfile bump to the next tag to pick this up
 # 0.3.0
