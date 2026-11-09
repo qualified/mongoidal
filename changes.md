@@ -1,3 +1,6 @@
+# Unreleased
+- Fixed EmbeddedErrors#embedded_errors raising NoMethodError on Rails 7.0 (ActiveModel::Errors#to_h was removed); it no longer triggers the 6.1 deprecations
+- Qualified needs a Gemfile bump to the next tag to pick this up
 # 0.3.0
 - Added GitHub Actions CI: Mongoid 7.4 / 8.0 / 8.1 x Ruby 3.0 / 3.2 against mongo:7.0
 - Verified compatibility with Mongoid 8.0 and 8.1
